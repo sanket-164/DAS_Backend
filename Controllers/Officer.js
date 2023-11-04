@@ -87,15 +87,8 @@ export const getAppointments = async (req, res, next) => {
 
     try {
         const existingAppointments = await Appointment.find();
-        const appointments = [];
 
-        await existingAppointments.map(async (appointment, i) => {
-            const citizenInfo = await Citizen.findOne({ adharcard: appointment.c_adharcard }).select('c_name c_image');
-            appointments[i] = [...appointments, {...existingAppointments[i]._doc, name: citizenInfo.c_name, image: citizenInfo.c_image}];
-            console.log(appointments[i]);
-        });
-
-        res.status(200).json({ success: true, appointment: appointments });
+        res.status(200).json({ success: true, appointments: existingAppointments });
 
     } catch (error) {
         next(error);

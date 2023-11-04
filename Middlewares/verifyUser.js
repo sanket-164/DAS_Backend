@@ -7,9 +7,14 @@ const verifyUser = (req, res, next) => {
 
         const user = jwt.verify(req.header('authToken'), "12345678");
 
-        if (!mongoose.Types.ObjectId.isValid(user.id)) return res.status(404).json({ success: false, message: "Authentication failed" });
+        if(!user.id){
+            // if (!mongoose.Types.ObjectId.isValid(user.id))
+            return res.status(404).json({ success: false, message: "Authentication failed" });
+        }
 
         req.user = user;
+
+        console.log(user)
 
         next();
     } catch (error) {

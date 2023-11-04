@@ -3,6 +3,7 @@ import { createTransport } from "nodemailer";
 import createHttpError from "http-errors";
 import Citizen from '../Models/Citizen.js';
 import Appointment from "../Models/Appointment.js";
+import jwt from "jsonwebtoken";
 
 const email_pass = process.env.EMAIL_PASS;
 const email_user = process.env.EMAIL_USER;
@@ -91,7 +92,7 @@ export const getToken = async (req, res, next) => {
 
     if (!existingCitizen) throw createHttpError(400, "Adharcard Number does not exist");
 
-    const token = jwt.sign({ adharcard: existingCitizen.adharcard }, "12345678");
+    const token = jwt.sign({ id: adharcard }, "12345678");
 
     res.status(200).json({ success: true, token: token });
 
@@ -105,10 +106,12 @@ export const setAppointment = async (req, res, next) => {
 
   try {
 
-    const { adharcard, ap_purpose } = req.body;
+    const { ap_purpose } = req.body;
 
-    const existingCitizen = await Citizen.findOne({ adharcard: adharcard });
-    const newAppointment = await Appointment.create({ c_adharcard: adharcard, ap_purpose: ap_purpose, name: existingCitizen.c_name, image: existingCitizen.c_image });
+    console.log(req.user);
+
+    const existingCitizen = await Citizen.findOne({ adharcard: req.user.id });
+    const newAppointment = await Appointment.create({ c_adharcard: req.user.id, ap_purpose: ap_purpose, name: existingCitizen.c_name, image: existingCitizen.c_image });
 
     res.status(200).json({ success: true, appointment: newAppointment });
 
