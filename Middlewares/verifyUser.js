@@ -5,6 +5,8 @@ import "dotenv/config";
 const verifyUser = (req, res, next) => {
     try {
 
+        console.log(req.header('authToken'));
+        
         const user = jwt.verify(req.header('authToken'), "12345678");
 
         if(!user.id){

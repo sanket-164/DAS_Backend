@@ -16,11 +16,39 @@ const transporter = createTransport({
   },
 });
 
+export const getProfile = async (req, res, next) => {
+  try {
+
+    const existingCitizen = await Citizen.findOne({ adharcard: req.user.id });
+
+    if (!existingCitizen) throw createHttpError(400, "Adharcard Number does not exist");
+
+    res.status(200).json({ success: true, citizen: existingCitizen });
+
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const citizenLogin = async (req, res, next) => {
 
   try {
     const { adharcard } = req.body;
-    const otp = Math.floor(Math.random() * 1000000 + 1);
+    const randomNo = Math.floor(Math.random() * 1000000 + 1);
+
+    function addLeadingZeroes(number, length) {
+      let numberStr = number.toString();
+
+      let zeroesNeeded = length - numberStr.length;
+
+      for (let i = 0; i < zeroesNeeded; i++) {
+        numberStr = '0' + numberStr;
+      }
+
+      return numberStr;
+    }
+
+    const otp = addLeadingZeroes(randomNo, 6);
 
     if (!(adharcard)) throw createHttpError(400, "Required credentials are not provided");
 
