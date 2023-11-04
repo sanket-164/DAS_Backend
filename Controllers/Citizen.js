@@ -25,7 +25,7 @@ export const citizenLogin = async (req, res, next) => {
 
     const existingCitizen = await Citizen.findOne({ adharcard: adharcard });
 
-    if (!existingCitizen) throw createHttpError(400, "Number does not exist");
+    if (!existingCitizen) throw createHttpError(400, "Adharcard Number does not exist");
 
     const mailOptions = {
       from: email_user,
@@ -71,25 +71,44 @@ export const citizenLogin = async (req, res, next) => {
           str
         );
 
-        res.status(200).json({ success, otp: otp, message: `OTP sent to ${emailadd}` });
+        res.status(200).json({ success: true, otp: otp, message: `OTP sent to ${emailadd}` });
       }
     });
 
-    // const token = jwt.sign({ id: existingCitizen.userId }, "12345678");
-
-    // res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }
+}
+
+export const getToken = async (req, res, next) => {
+
+  try {
+    const { adharcard } = req.body;
+
+    if (!(adharcard)) throw createHttpError(400, "Required credentials are not provided");
+
+    const existingCitizen = await Citizen.findOne({ adharcard: adharcard });
+
+    if (!existingCitizen) throw createHttpError(400, "Adharcard Number does not exist");
+
+    const token = jwt.sign({ adharcard: existingCitizen.adharcard }, "12345678");
+
+    res.status(200).json({ success: true, token: token });
+
+  } catch (error) {
+    next(error);
+  }
+
 }
 
 export const setAppointment = async (req, res, next) => {
 
   try {
 
-    const { ap_purpose } = req.body;
+    const { adharcard, ap_purpose } = req.body;
 
-    const newAppointment = await Appointment.create({ c_adharcard: 39398399984, ap_purpose: ap_purpose});
+    const existingCitizen = await Citizen.findOne({ adharcard: adharcard });
+    const newAppointment = await Appointment.create({ c_adharcard: adharcard, ap_purpose: ap_purpose, name: existingCitizen.c_name, image: existingCitizen.c_image });
 
     res.status(200).json({ success: true, appointment: newAppointment });
 

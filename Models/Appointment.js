@@ -5,6 +5,12 @@ const Appointment = mongoose.Schema({
         type: Number,
         required: true,
     },
+    name:{
+        type: String,
+    },
+    image:{
+        type: String,
+    },
     o_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Officer"

@@ -44,12 +44,12 @@ export const officerLogin = async (req, res, next) => {
 export const getProfile = async (req, res, next) => {
 
     try {
-        
+
         const existingOfficer = await Officer.findById(req.user.id);
 
-        if(!existingOfficer) throw createHttpError(400, "Officer does not exist");
+        if (!existingOfficer) throw createHttpError(400, "Officer does not exist");
 
-        res.status(200).json({ success: true, officer: existingOfficer});
+        res.status(200).json({ success: true, officer: existingOfficer });
     } catch (error) {
         next(error);
     }
@@ -60,24 +60,24 @@ export const setProfile = async (req, res, next) => {
     try {
 
         const { o_name, o_email, o_mobile } = req.body;
-        
+
         const emailExist = await Officer.countDocuments({ o_email: o_email });
         const mobileExist = await Officer.countDocuments({ o_mobile: o_mobile });
-        
-        if(emailExist > 1) throw createHttpError(400, "Email is already used");
-        if(mobileExist > 1) throw createHttpError(400, "Mobile Number is already used");
-        
-        const existingOfficer = await Officer.findById(req.user.id);
-        
-        if(!existingOfficer) throw createHttpError(400, "Officer does not exist");
 
-        existingOfficer.o_name = o_name?o_name:existingOfficer.o_name;
-        existingOfficer.o_email = o_email?o_email:existingOfficer.o_email;
-        existingOfficer.o_mobile = o_mobile?o_mobile:existingOfficer.o_mobile;
+        if (emailExist > 1) throw createHttpError(400, "Email is already used");
+        if (mobileExist > 1) throw createHttpError(400, "Mobile Number is already used");
+
+        const existingOfficer = await Officer.findById(req.user.id);
+
+        if (!existingOfficer) throw createHttpError(400, "Officer does not exist");
+
+        existingOfficer.o_name = o_name ? o_name : existingOfficer.o_name;
+        existingOfficer.o_email = o_email ? o_email : existingOfficer.o_email;
+        existingOfficer.o_mobile = o_mobile ? o_mobile : existingOfficer.o_mobile;
 
         existingOfficer.save();
 
-        res.status(200).json({ success: true, officer: existingOfficer});
+        res.status(200).json({ success: true, officer: existingOfficer });
     } catch (error) {
         next(error);
     }
@@ -87,8 +87,15 @@ export const getAppointments = async (req, res, next) => {
 
     try {
         const existingAppointments = await Appointment.find();
+        const appointments = [];
 
-        res.status(200).json({ success: true, appointment: existingAppointments });
+        await existingAppointments.map(async (appointment, i) => {
+            const citizenInfo = await Citizen.findOne({ adharcard: appointment.c_adharcard }).select('c_name c_image');
+            appointments[i] = [...appointments, {...existingAppointments[i]._doc, name: citizenInfo.c_name, image: citizenInfo.c_image}];
+            console.log(appointments[i]);
+        });
+
+        res.status(200).json({ success: true, appointment: appointments });
 
     } catch (error) {
         next(error);
