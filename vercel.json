@@ -1,10 +1,10 @@
 {
     "version": 2,
-    "name": "DAS APIs",
+    "name": "DAS_APIs",
     "builds": [
         { "src": "server.js", "use": "@vercel/node" }
     ],
     "routes": [
-        { "src": "/(.*)", "dest": "/srever.js" }
+        { "src": "/(.*)", "dest": "/server.js" }
     ]
 }

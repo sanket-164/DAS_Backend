@@ -1,35 +1,36 @@
 import mongoose from "mongoose";
 
-const Officer = mongoose.Schema({
-    o_name: {
-        type: String,
+const Citizen = mongoose.Schema({
+    adharcard: {
+        type: Number,
         required: true,
     },
-    o_email: {
+    c_name: {
+        type: String,
+        required: true
+    },
+    c_email: {
         type: String,
         required: true,
         unique: true,
     },
-    o_mobile: {
+    c_mobile: {
         type: String,
         required: true,
         unique: true,
     },
-    o_password: {
+    c_image: {
         type: String,
         required: true
     },
-    o_image: {
-        type: String,
-    },
-    o_designation: {
+    c_address: {
         type: String,
         required: true
     },
-    o_address: {
-        type: String,
+    c_dob: {
+        type: Date,
         required: true
     }
 }, { timestamps: true });
 
-export default mongoose.model('Officer', Officer);
+export default mongoose.model('Citizen', Citizen);

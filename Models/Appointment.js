@@ -2,20 +2,18 @@ import mongoose from "mongoose";
 
 const Appointment = mongoose.Schema({
     c_adharcard: {
-        type: String,
+        type: Number,
         required: true,
     },
     o_id: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Officer"
     },
     ap_starts: {
         type: Date,
-        required: true,
     },
-    ap_ends: {
+    ap_end: {
         type: Date,
-        required: true
     },
     ap_status: {
         type: String,

@@ -6,6 +6,7 @@ import morgan from 'morgan';
 
 import { errorHandler } from './Middlewares/errorHandler.js';
 import officerRoutes from './Routes/Officer.js';
+import citizenRoutes from './Routes/Citizen.js';
 import Officer from './Models/Officer.js';
 
 const app = express();
@@ -27,6 +28,7 @@ app.get('/getofficer', async (req, res) => {
 });
 
 app.use('/officer', officerRoutes);
+app.use('/citizen', citizenRoutes);
 
 app.use((req, res, next) => {
     next(createHttpError(404, req.url + " URL not found"));
